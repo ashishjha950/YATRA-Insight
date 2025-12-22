@@ -1,10 +1,9 @@
 import { Router } from 'express'
 import { protect } from '../../middlewares/auth.middleware.js'
+import { triggerSOS } from './sos.controller.js'
 
 const router = Router()
 
-router.get('/me', protect, (req, res) => {
-  res.json({ user: req.user })
-})
+router.post('/trigger', protect, triggerSOS)
 
 export default router

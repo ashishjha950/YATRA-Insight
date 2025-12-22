@@ -1,8 +1,11 @@
 export const triggerSOS = async (req, res) => {
-  const { location } = req.body
+  const { latitude, longitude } = req.body
 
-  // In real life → notify services
-  console.log('SOS triggered at', location)
+  // Placeholder: later integrate SMS / authority APIs
+  console.log('🚨 SOS:', latitude, longitude, 'User:', req.user.id)
 
-  res.json({ status: 'SOS sent' })
+  res.json({
+    status: 'SOS triggered',
+    location: { latitude, longitude }
+  })
 }
