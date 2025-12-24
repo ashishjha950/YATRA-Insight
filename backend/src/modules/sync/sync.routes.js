@@ -1,10 +1,9 @@
 import { Router } from 'express'
 import { protect } from '../../middlewares/auth.middleware.js'
+import { syncData } from './sync.controller.js'
 
 const router = Router()
 
-router.get('/me', protect, (req, res) => {
-  res.json({ user: req.user })
-})
+router.post('/', protect, syncData)
 
 export default router

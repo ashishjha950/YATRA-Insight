@@ -1,13 +1,17 @@
-const jwt = require('jsonwebtoken')
+import jwt from 'jsonwebtoken'
+import ApiError from '../utils/apiError.js'
 
-exports.protect = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1]
-  if (!token) return res.status(401).json({ message: 'Unauthorized' })
+export const protect = (req, res, next) => {
+  const authHeader = req.headers.authorization
+
+  if (!authHeader || !authHeader.startsWith('Bearer '))
+    throw new ApiError(401, 'Unauthorized')
 
   try {
+    const token = authHeader.split(' ')[1]
     req.user = jwt.verify(token, process.env.JWT_SECRET)
     next()
   } catch {
-    res.status(401).json({ message: 'Invalid token' })
+    throw new ApiError(401, 'Invalid token')
   }
 }
