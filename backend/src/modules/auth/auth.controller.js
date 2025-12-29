@@ -1,58 +1,58 @@
-import bcrypt from 'bcryptjs'
 import User from '../users/user.model.js'
 import { signToken } from '../../utils/jwt.js'
+import Otp from '../users/otp.model.js'
+import crypto from 'crypto'
 
-/**
- * REGISTER
- */
-export const register = async (req, res) => {
-  const { name, email, password } = req.body
+export const sendOtp = async (req, res) => {
+  const { email, phone } = req.body
 
-  const exists = await User.findOne({ email })
-  if (exists)
-    return res.status(409).json({ message: 'User already exists' })
+  if (!email && !phone)
+    return res.status(400).json({ message: 'Email or phone required' })
 
-  const hashed = await bcrypt.hash(password, 10)
+  const identifier = email || phone
+  const otp = crypto.randomInt(100000, 999999).toString()
 
-  const user = await User.create({
-    name,
-    email,
-    password: hashed,
-    role: 'USER' // FORCE user role
+  await Otp.deleteMany({ identifier })
+
+  await Otp.create({
+    identifier,
+    otp,
+    expiresAt: new Date(Date.now() + 5 * 60 * 1000)
   })
 
-  const token = signToken({
-    id: user._id,
-    role: user.role
-  })
+  // TODO: integrate SMS / Email service
+  console.log('OTP:', otp)
 
-  res.status(201).json({
-    token,
-    user: {
-      id: user._id,
-      name: user.name,
-      role: user.role
-    }
-  })
+  res.json({ message: 'OTP sent successfully' })
 }
 
 
-/**
- * LOGIN
- */
-export const login = async (req, res) => {
-  const { email, password } = req.body
+export const verifyOtp = async (req, res) => {
+  const { email, phone, otp } = req.body
 
-  if (!email || !password)
-    return res.status(400).json({ message: 'Email & password required' })
+  if (!otp || (!email && !phone))
+    return res.status(400).json({ message: 'Invalid request' })
 
-  const user = await User.findOne({ email }).select('+password')
-  if (!user)
-    return res.status(401).json({ message: 'Invalid credentials' })
+  const identifier = email || phone
 
-  const isMatch = await bcrypt.compare(password, user.password)
-  if (!isMatch)
-    return res.status(401).json({ message: 'Invalid credentials' })
+  const otpRecord = await Otp.findOne({ identifier })
+  if (!otpRecord || otpRecord.otp !== otp)
+    return res.status(401).json({ message: 'Invalid or expired OTP' })
+
+  let user = await User.findOne(
+    email ? { email } : { phone }
+  )
+
+  // AUTO-REGISTER
+  if (!user) {
+    user = await User.create({
+      email,
+      phone,
+      isVerified: true
+    })
+  }
+
+  await Otp.deleteMany({ identifier })
 
   const token = signToken({
     id: user._id,
@@ -63,8 +63,8 @@ export const login = async (req, res) => {
     token,
     user: {
       id: user._id,
-      name: user.name,
       email: user.email,
+      phone: user.phone,
       role: user.role
     }
   })
