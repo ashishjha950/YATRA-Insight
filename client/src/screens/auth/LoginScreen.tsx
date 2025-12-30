@@ -305,20 +305,18 @@ import {
 import { StatusBar } from 'expo-status-bar';
 
 export default function LoginScreen({ navigation }: any) {
-  const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
 
   const handleSendOTP = () => {
     if (!otpSent) {
-      // Send OTP
+      // TODO: Send Email OTP API
+      console.log('Email OTP Sent to:', email);
       setOtpSent(true);
-      console.log('OTP Sent');
     } else {
-      // Verify OTP and continue
-      console.log('Verify OTP');
+      // TODO: Verify OTP API
+      console.log('OTP Verified');
       navigation.navigate('EmergencyContact');
     }
   };
@@ -326,11 +324,6 @@ export default function LoginScreen({ navigation }: any) {
   const handleResendOTP = () => {
     console.log('Resend OTP');
     setOtp('');
-  };
-
-  const handleSkip = () => {
-    console.log('Skip for now');
-    // navigation.navigate('Main');
   };
 
   return (
@@ -343,95 +336,31 @@ export default function LoginScreen({ navigation }: any) {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
+        {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to continue your journey</Text>
+          <Text style={styles.subtitle}>
+            Sign in using your email to continue
+          </Text>
         </View>
 
-        <View style={styles.authMethodContainer}>
-          <TouchableOpacity
-            style={[
-              styles.authMethodButton,
-              authMethod === 'phone' && styles.authMethodButtonActive,
-            ]}
-            onPress={() => {
-              setAuthMethod('phone');
-              setOtpSent(false);
-              setOtp('');
-            }}
-          >
-            <View style={styles.phoneIcon}>
-              <View style={styles.phoneIconInner}>
-                <View style={styles.phoneReceiver} />
-              </View>
-            </View>
-            <Text
-              style={[
-                styles.authMethodText,
-                authMethod === 'phone' && styles.authMethodTextActive,
-              ]}
-            >
-              Phone
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.authMethodButton,
-              authMethod === 'email' && styles.authMethodButtonActive,
-            ]}
-            onPress={() => {
-              setAuthMethod('email');
-              setOtpSent(false);
-              setOtp('');
-            }}
-          >
-            <View style={styles.emailIcon}>
-              <View style={styles.emailEnvelope}>
-                <View style={styles.emailFlap} />
-              </View>
-            </View>
-            <Text
-              style={[
-                styles.authMethodText,
-                authMethod === 'email' && styles.authMethodTextActive,
-              ]}
-            >
-              Email
-            </Text>
-          </TouchableOpacity>
-        </View>
-
+        {/* Email Input */}
         <View style={styles.formContainer}>
-          {authMethod === 'phone' ? (
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Phone Number</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="+1 (555) 000-0000"
-                placeholderTextColor="#999"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                keyboardType="phone-pad"
-                editable={!otpSent}
-              />
-            </View>
-          ) : (
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email Address</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="your.email@example.com"
-                placeholderTextColor="#999"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                editable={!otpSent}
-              />
-            </View>
-          )}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Email Address</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="your.email@example.com"
+              placeholderTextColor="#999"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              editable={!otpSent}
+            />
+          </View>
 
+          {/* OTP Input */}
           {otpSent && (
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Enter OTP</Text>
@@ -444,8 +373,9 @@ export default function LoginScreen({ navigation }: any) {
                 keyboardType="number-pad"
                 maxLength={6}
               />
-              <TouchableOpacity 
-                style={styles.resendButton} 
+
+              <TouchableOpacity
+                style={styles.resendButton}
                 onPress={handleResendOTP}
               >
                 <Text style={styles.resendText}>Resend OTP</Text>
@@ -454,25 +384,17 @@ export default function LoginScreen({ navigation }: any) {
           )}
         </View>
 
-        <View style={styles.bottomContainer}>
-          <TouchableOpacity style={styles.sendButton} onPress={handleSendOTP}>
-            <Text style={styles.sendButtonText}>
-              {otpSent ? 'Verify & Continue' : 'Send OTP'}
-            </Text>
-          </TouchableOpacity>
-
-          {!otpSent && (
-            <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-              <Text style={styles.skipButtonText}>
-                Skip for now (limited access)
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
+        {/* Button */}
+        <TouchableOpacity style={styles.sendButton} onPress={handleSendOTP}>
+          <Text style={styles.sendButtonText}>
+            {otpSent ? 'Verify & Continue' : 'Send OTP'}
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -486,7 +408,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   header: {
-    marginBottom: 32,
+    marginBottom: 12,
   },
   title: {
     fontSize: 32,
