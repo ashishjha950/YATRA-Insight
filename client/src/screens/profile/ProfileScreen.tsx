@@ -7,6 +7,8 @@ import {
   ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import SettingItems from './SettingItems';
+
 
 export default function ProfileScreen() {
   return (
@@ -57,19 +59,19 @@ export default function ProfileScreen() {
 
        
 <View style={styles.sectionCard}>
-  <SettingItem title="Privacy & Consent" />
+  <SettingItems title="Privacy & Consent" />
   <Divider />
 
-  <SettingItem title="Location Data Usage" />
+  <SettingItems title="Location Data Usage" />
   <Divider />
 
-  <SettingItem title="Download My Data" />
+  <SettingItems title="Download My Data" />
   <Divider />
 
-  <SettingItem title="Terms & Policies" />
+  <SettingItems title="Terms & Policies" />
   <Divider />
 
-  <SettingItem title="Delete Account" danger />
+  <SettingItems title="Delete Account" danger />
 </View>
 
         <View style={{ height: 40 }} />
