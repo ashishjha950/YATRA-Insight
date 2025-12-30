@@ -4,12 +4,11 @@ import Otp from '../users/otp.model.js'
 import crypto from 'crypto'
 
 export const sendOtp = async (req, res) => {
-  const { email, phone } = req.body
+  const { identifier } = req.body
 
-  if (!email && !phone)
+  if (!identifier)
     return res.status(400).json({ message: 'Email or phone required' })
 
-  const identifier = email || phone
   const otp = crypto.randomInt(100000, 999999).toString()
 
   await Otp.deleteMany({ identifier })
@@ -20,7 +19,7 @@ export const sendOtp = async (req, res) => {
     expiresAt: new Date(Date.now() + 5 * 60 * 1000)
   })
 
-  // TODO: integrate SMS / Email service
+  // TODO: send email or SMS based on identifier
   console.log('OTP:', otp)
 
   res.json({ message: 'OTP sent successfully' })
@@ -28,26 +27,24 @@ export const sendOtp = async (req, res) => {
 
 
 export const verifyOtp = async (req, res) => {
-  const { email, phone, otp } = req.body
+  const { identifier, otp } = req.body
 
-  if (!otp || (!email && !phone))
+  if (!identifier || !otp)
     return res.status(400).json({ message: 'Invalid request' })
 
-  const identifier = email || phone
-
   const otpRecord = await Otp.findOne({ identifier })
+
   if (!otpRecord || otpRecord.otp !== otp)
     return res.status(401).json({ message: 'Invalid or expired OTP' })
 
-  let user = await User.findOne(
-    email ? { email } : { phone }
-  )
+  let user = await User.findOne({
+    $or: [{ email: identifier }, { phone: identifier }]
+  })
 
-  // AUTO-REGISTER
   if (!user) {
     user = await User.create({
-      email,
-      phone,
+      email: identifier.includes('@') ? identifier : undefined,
+      phone: identifier.includes('@') ? undefined : identifier,
       isVerified: true
     })
   }
