@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,27 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import SettingItems from './SettingItems';
+import { clearAuth, getUser } from '../../utils/secureStorage';
 
 
 export default function ProfileScreen() {
+
+  const [user,setUser] = useState();
+
+  const logoutUser = async () => {
+    await clearAuth()
+  }
+
+  const fetchData=async () => {
+      const user = await getUser();
+      setUser(user)
+      console.log(user)
+    }
+  
+    useEffect(()=>{
+      fetchData();
+    },[])
+
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
@@ -28,9 +46,8 @@ export default function ProfileScreen() {
           </View>
 
           <View style={styles.profileInfo}>
-            <Text style={styles.name}>Ishant</Text>
-            <Text style={styles.email}>Ishant@example.com</Text>
-            <Text style={styles.phone}>+1 (555) 123-4567</Text>
+            <Text style={styles.name}>{user?.name?user.name:"User"}</Text>
+            <Text style={styles.email}>{user?.email?user.email:"user"}</Text>
           </View>
 
           <TouchableOpacity>
@@ -72,6 +89,7 @@ export default function ProfileScreen() {
   <Divider />
 
   <SettingItems title="Delete Account" danger />
+  <SettingItems title="Logout" danger onPress={logoutUser} />
 </View>
 
         <View style={{ height: 40 }} />

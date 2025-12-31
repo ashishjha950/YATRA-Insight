@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,22 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
+import { getUser } from '../../utils/secureStorage';
 
 export default function HomeScreen() {
+
+  const [user,setUser] = useState();
+
+  const fetchData=async () => {
+    const user = await getUser();
+    setUser(user)
+    console.log(user)
+  }
+
+  useEffect(()=>{
+    fetchData();
+  },[])
+  
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -24,7 +38,7 @@ export default function HomeScreen() {
       >
         <View style={styles.headerContent}>
           <View>
-            <Text style={styles.greeting}>Hi, Ishant 👋</Text>
+            <Text style={styles.greeting}>Hi, {user?.name?user.name:"User"} 👋</Text>
             <View style={styles.locationRow}>
               <View style={styles.locationIcon}>
                 <View style={styles.locationPinSmall}>
