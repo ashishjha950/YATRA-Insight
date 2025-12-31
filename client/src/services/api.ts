@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { API_CONFIG } from '../config/api.config'
+import { getToken } from '../utils/secureStorage';
 
 const api = axios.create({
   baseURL: API_CONFIG.BASE_URL,
@@ -12,11 +13,16 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   async (config) => {
-    // later: attach token here
-    return config
+    const token = await getToken();
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
   },
   (error) => Promise.reject(error)
-)
+);
 
 // Response interceptor
 api.interceptors.response.use(

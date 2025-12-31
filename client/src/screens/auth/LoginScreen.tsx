@@ -303,28 +303,53 @@ import {
   ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useAuthOtp } from '../../hooks/useAuthOtp'
+import { saveAuth } from '../../utils/secureStorage';
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
+  const {
+  loading,
+  otpSent,
+  requestOtp,
+  confirmOtp,
+} = useAuthOtp()
 
-  const handleSendOTP = () => {
-    if (!otpSent) {
-      // TODO: Send Email OTP API
-      console.log('Email OTP Sent to:', email);
-      setOtpSent(true);
-    } else {
-      // TODO: Verify OTP API
-      console.log('OTP Verified');
-      navigation.navigate('EmergencyContact');
+
+  const isValidEmail = (value: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
+
+
+const handleSendOTP = async () => {
+  if (!otpSent) {
+    if (!email || !isValidEmail(email)) {
+      alert('Enter valid email')
+      return
     }
-  };
+    
+    await requestOtp(email)
+  } else {
+    if (!otp) {
+      alert('Please enter the OTP')
+      return
+    }
+    else if (otp.length !== 6) {
+      alert('Invalid OTP')
+      return
+    }
 
-  const handleResendOTP = () => {
-    console.log('Resend OTP');
-    setOtp('');
-  };
+    const res = await confirmOtp(email, otp)
+    await saveAuth(res.token, res.user)
+    navigation.navigate('EmergencyContact')
+  }
+}
+
+  const handleResendOTP = async () => {
+  setOtp('')
+  await requestOtp(email)
+}
 
   return (
     <KeyboardAvoidingView
@@ -387,8 +412,13 @@ export default function LoginScreen({ navigation }: any) {
         {/* Button */}
         <TouchableOpacity style={styles.sendButton} onPress={handleSendOTP}>
           <Text style={styles.sendButtonText}>
-            {otpSent ? 'Verify & Continue' : 'Send OTP'}
-          </Text>
+  {loading
+    ? 'Please wait...'
+    : otpSent
+    ? 'Verify & Continue'
+    : 'Send OTP'}
+</Text>
+
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
