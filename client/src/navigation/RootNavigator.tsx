@@ -356,6 +356,9 @@ import SplashScreen from "../screens/SplashScreen";
 import OnboardingScreen from "../screens/onBoarding/OnboardingScreen";
 import AuthNavigator from "./AuthNavigator";
 import MainNavigator from "./TabNavigator";
+import ExpensesScreen from "../screens/expenses/ExpensesScreen";
+import StartTripScreen from "../screens/trip/StartTripScreen";
+import TripScreen from "../screens/trip/TripScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -396,7 +399,26 @@ export default function RootNavigator() {
           </Stack.Screen>
         </>
       ) : (
+        <>
         <Stack.Screen name="Main" component={MainNavigator} />
+      
+      <Stack.Screen
+            name="Expenses"
+            component={ExpensesScreen}
+            options={{
+              animation: "slide_from_right", // optional but nice
+            }}
+          />
+
+        <Stack.Screen name="startTrip" component={StartTripScreen} options={{
+              animation: "slide_from_right", // optional but nice
+            }} />   
+
+             <Stack.Screen name="Trip" component={TripScreen} options={{
+              animation: "slide_from_right", // optional but nice
+            }} />       
+
+      </>
       )}
     </Stack.Navigator>
   );

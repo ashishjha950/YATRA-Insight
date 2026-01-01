@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import SettingItems from './SettingItems';
+import RecordButton from '../../components/ui/diary/RecordButton';
 
 
 export default function ProfileScreen() {
@@ -75,7 +76,10 @@ export default function ProfileScreen() {
 </View>
 
         <View style={{ height: 40 }} />
+
       </ScrollView>
+    
+    <RecordButton />
     </View>
   );
 }
@@ -107,6 +111,7 @@ function SettingItem({ title, badge }: any) {
         )}
         <Text style={styles.arrow}>›</Text>
       </View>
+
     </TouchableOpacity>
   );
 }

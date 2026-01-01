@@ -8,6 +8,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { Ionicons } from '@expo/vector-icons';
+import RecordButton from '../../components/ui/diary/RecordButton';
+import { useNavigation } from '@react-navigation/native';
 
 const trips = [
   {
@@ -64,12 +67,18 @@ const trips = [
 
 
 export default function TripScreen() {
+
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
 
       {/* Header */}
       <View style={styles.header}>
+          <TouchableOpacity  onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#1a1a1a" />
+              </TouchableOpacity>
         <Text style={styles.headerTitle}>My Trips</Text>
       </View>
 
@@ -102,6 +111,8 @@ export default function TripScreen() {
         contentContainerStyle={{ paddingBottom: 24 }}
         renderItem={({ item }) => <TripCard trip={item} />}
       />
+
+      <RecordButton />
     </View>
   );
 }
@@ -154,6 +165,9 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 60,
     paddingBottom: 16,
+    flexDirection: 'row',
+    gap: 20,
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 22,
