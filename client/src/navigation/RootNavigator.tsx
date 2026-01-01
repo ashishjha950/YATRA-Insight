@@ -349,6 +349,60 @@
 
 
 
+// import { createNativeStackNavigator } from "@react-navigation/native-stack";
+// import { useEffect, useState } from "react";
+
+// import SplashScreen from "../screens/SplashScreen";
+// import OnboardingScreen from "../screens/onBoarding/OnboardingScreen";
+// import AuthNavigator from "./AuthNavigator";
+// import MainNavigator from "./TabNavigator";
+
+// const Stack = createNativeStackNavigator();
+
+// export default function RootNavigator() {
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+//   useEffect(() => {
+//     setTimeout(() => {
+//       setIsLoading(false);
+//     }, 3000);
+//   }, []);
+
+//   if (isLoading) {
+//     return <SplashScreen />;
+//   }
+
+//   return (
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       {!isAuthenticated ? (
+//         <>
+//           <Stack.Screen name="Onboarding">
+//             {(props) => (
+//               <OnboardingScreen
+//                 {...props}
+//                 onFinish={() => setIsAuthenticated(true)}
+//               />
+//             )}
+//           </Stack.Screen>
+
+//           <Stack.Screen name="Auth">
+//             {(props) => (
+//               <AuthNavigator
+//                 {...props}
+//                 onAuthSuccess={() => setIsAuthenticated(true)}
+//               />
+//             )}
+//           </Stack.Screen>
+//         </>
+//       ) : (
+//         <Stack.Screen name="Main" component={MainNavigator} />
+//       )}
+//     </Stack.Navigator>
+//   );
+// }
+
+
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 
@@ -360,6 +414,8 @@ import ExpensesScreen from "../screens/expenses/ExpensesScreen";
 import StartTripScreen from "../screens/trip/StartTripScreen";
 import TripScreen from "../screens/trip/TripScreen";
 
+import { getToken } from "../utils/secureStorage";
+
 const Stack = createNativeStackNavigator();
 
 export default function RootNavigator() {
@@ -367,9 +423,13 @@ export default function RootNavigator() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
+    const bootstrapAuth = async () => {
+      const token = await getToken();
+      setIsAuthenticated(!!token);
       setIsLoading(false);
-    }, 3000);
+    };
+
+    bootstrapAuth();
   }, []);
 
   if (isLoading) {
@@ -384,7 +444,7 @@ export default function RootNavigator() {
             {(props) => (
               <OnboardingScreen
                 {...props}
-                onFinish={() => setIsAuthenticated(true)}
+                onFinish={() => {}}
               />
             )}
           </Stack.Screen>

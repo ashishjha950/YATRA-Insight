@@ -10,12 +10,9 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       lowercase: true,
-      trim: true
-    },
-
-    phone: {
-      type: String,
-      trim: true
+      trim: true,
+      unique: true,
+      required: true
     },
 
     isVerified: {
@@ -31,9 +28,5 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 )
-
-// UNIQUE identity constraints
-userSchema.index({ email: 1 }, { unique: true, sparse: true })
-userSchema.index({ phone: 1 }, { unique: true, sparse: true })
 
 export default mongoose.model('User', userSchema)

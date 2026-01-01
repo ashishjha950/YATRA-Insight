@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import React from 'react';
 // import {
 //   View,
@@ -473,9 +474,184 @@
 
 
 
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
+// import { View, StyleSheet, FlatList } from 'react-native';
+// import { StatusBar } from 'expo-status-bar';
+// import Header from '../../components/ui/Home/Header';
+// import ActiveTripCard from '../../components/ui/Home/ActiveTripCard';
+// import QuickActions from '../../components/ui/Home/QuickActions';
+// import RecommendedSection from '../../components/ui/Home/RecommendedSection';
+// import RecentActivitySection from '../../components/ui/Home/RecentActivitySection';
+// import RecordButton from '../../components/ui/diary/RecordButton';
+
+
+// export default function HomeScreen() {
+//   const [activeTab, setActiveTab] = useState('home');
+
+//   const userData = {
+//     name: 'Ishant',
+//     location: 'San Francisco, CA',
+//     weather: {
+//       condition: 'Partly Cloudy',
+//       temp: 72
+//     }
+//   };
+
+//   const activeTrip = {
+//     title: 'Exploring Jaipur',
+//     day: 2,
+//     totalDays: 5,
+//     placesVisited: 3,
+//     progress: 40
+//   };
+
+//   const recommendations = [
+//     { id: '1', name: 'Yosemite National Park', distance: 245, rating: 4.9 },
+//     { id: '2', name: 'Big Sur Coast', distance: 178, rating: 4.8 },
+//     { id: '3', name: 'Lake Tahoe', distance: 198, rating: 4.7 },
+//   ];
+
+//   const recentActivities = [
+//     { 
+//       id: '1', 
+//       title: 'Trip to Lake Tahoe', 
+//       date: 'Dec 18, 2024', 
+//       distance: 245,
+//       status: 'Confirmed',
+//       price: 247
+//     },
+//     { 
+//       id: '2', 
+//       title: 'Weekend in Napa Valley', 
+//       date: 'Dec 5, 2024', 
+//       distance: 178,
+//       status: 'Completed',
+//       price: 189
+//     },
+//     { 
+//       id: '3', 
+//       title: 'San Diego Adventure', 
+//       date: 'Nov 1, 2024', 
+//       distance: 502,
+//       status: 'Completed',
+//       price: 432
+//     },
+//   ];
+
+//   // Define sections for FlatList
+//   const sections = [
+//     { id: 'active-trip', type: 'active-trip', data: activeTrip },
+//     { id: 'quick-actions', type: 'quick-actions' },
+//     { id: 'recommended', type: 'recommended', data: recommendations },
+//     { id: 'recent-activity', type: 'recent-activity', data: recentActivities },
+//   ];
+
+//   const renderSection = ({ item }) => {
+//     switch (item.type) {
+//       case 'active-trip':
+//         return <ActiveTripCard trip={item.data} />;
+//       case 'quick-actions':
+//         return <QuickActions />;
+//       case 'recommended':
+//         return <RecommendedSection recommendations={item.data} />;
+//       case 'recent-activity':
+//         return <RecentActivitySection activities={item.data} />;
+//       default:
+//         return null;
+//     }
+//   };
+
+// import React, { useEffect, useState } from 'react';
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   TextInput,
+//   ScrollView,
+//   TouchableOpacity,
+// } from 'react-native';
+// import { LinearGradient } from 'expo-linear-gradient';
+// import { StatusBar } from 'expo-status-bar';
+// import { getUser } from '../../utils/secureStorage';
+
+// export default function HomeScreen() {
+
+//   const [user,setUser] = useState();
+
+//   const fetchData=async () => {
+//     const user = await getUser();
+//     setUser(user)
+//     console.log(user)
+//   }
+
+//   useEffect(()=>{
+//     fetchData();
+//   },[])
+  
+// >>>>>>> 00d713a24debd200b5cf1b2970136a9d85cd5030
+//   return (
+//     <View style={styles.container}>
+//       <StatusBar style="light" />
+//       <Header 
+//         userName={userData.name}
+//         location={userData.location}
+//         weather={userData.weather}
+//       />
+      
+//       <FlatList
+//         data={sections}
+//         renderItem={renderSection}
+//         keyExtractor={item => item.id}
+//         showsVerticalScrollIndicator={false}
+//         contentContainerStyle={styles.flatListContent}
+//         nestedScrollEnabled={true}
+//         removeClippedSubviews={false}
+//       />
+//       {/* Header with Gradient */}
+//       <LinearGradient
+//         colors={['#1976D2', '#1565C0']}
+//         style={styles.header}
+//         start={{ x: 0, y: 0 }}
+//         end={{ x: 1, y: 1 }}
+//       >
+//         <View style={styles.headerContent}>
+//           <View>
+//             <Text style={styles.greeting}>Hi, {user?.name?user.name:"User"} 👋</Text>
+//             <View style={styles.locationRow}>
+//               <View style={styles.locationIcon}>
+//                 <View style={styles.locationPinSmall}>
+//                   <View style={styles.locationPinSmallOuter}>
+//                     <View style={styles.locationPinSmallInner} />
+//                   </View>
+//                   <View style={styles.locationPinSmallBottom} />
+//                 </View>
+//               </View>
+//               <Text style={styles.location}>San Francisco, CA</Text>
+//             </View>
+//           </View>
+
+//       <RecordButton />
+//     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#F8F9FA',
+//   },
+//   flatListContent: {
+//     paddingTop: 16,
+//     paddingBottom: 100,
+//   },
+// });
+
+
+
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+
 import Header from '../../components/ui/Home/Header';
 import ActiveTripCard from '../../components/ui/Home/ActiveTripCard';
 import QuickActions from '../../components/ui/Home/QuickActions';
@@ -483,17 +659,26 @@ import RecommendedSection from '../../components/ui/Home/RecommendedSection';
 import RecentActivitySection from '../../components/ui/Home/RecentActivitySection';
 import RecordButton from '../../components/ui/diary/RecordButton';
 
+import { getUser } from '../../utils/secureStorage';
 
 export default function HomeScreen() {
-  const [activeTab, setActiveTab] = useState('home');
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const storedUser = await getUser();
+      setUser(storedUser);
+    };
+    fetchUser();
+  }, []);
 
   const userData = {
-    name: 'Ishant',
+    name: user?.name || 'User',
     location: 'San Francisco, CA',
     weather: {
       condition: 'Partly Cloudy',
-      temp: 72
-    }
+      temp: 72,
+    },
   };
 
   const activeTrip = {
@@ -501,7 +686,7 @@ export default function HomeScreen() {
     day: 2,
     totalDays: 5,
     placesVisited: 3,
-    progress: 40
+    progress: 40,
   };
 
   const recommendations = [
@@ -511,33 +696,32 @@ export default function HomeScreen() {
   ];
 
   const recentActivities = [
-    { 
-      id: '1', 
-      title: 'Trip to Lake Tahoe', 
-      date: 'Dec 18, 2024', 
+    {
+      id: '1',
+      title: 'Trip to Lake Tahoe',
+      date: 'Dec 18, 2024',
       distance: 245,
-      status: 'Confirmed',
-      price: 247
+      status: 'Completed',
+      price: 247,
     },
-    { 
-      id: '2', 
-      title: 'Weekend in Napa Valley', 
-      date: 'Dec 5, 2024', 
+    {
+      id: '2',
+      title: 'Weekend in Napa Valley',
+      date: 'Dec 5, 2024',
       distance: 178,
       status: 'Completed',
-      price: 189
+      price: 189,
     },
-    { 
-      id: '3', 
-      title: 'San Diego Adventure', 
-      date: 'Nov 1, 2024', 
+    {
+      id: '3',
+      title: 'San Diego Adventure',
+      date: 'Nov 1, 2024',
       distance: 502,
       status: 'Completed',
-      price: 432
+      price: 432,
     },
   ];
 
-  // Define sections for FlatList
   const sections = [
     { id: 'active-trip', type: 'active-trip', data: activeTrip },
     { id: 'quick-actions', type: 'quick-actions' },
@@ -545,7 +729,7 @@ export default function HomeScreen() {
     { id: 'recent-activity', type: 'recent-activity', data: recentActivities },
   ];
 
-  const renderSection = ({ item }) => {
+  const renderSection = ({ item }: any) => {
     switch (item.type) {
       case 'active-trip':
         return <ActiveTripCard trip={item.data} />;
@@ -563,23 +747,23 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
-      
-      <Header 
+
+      {/* Gradient Header Component */}
+      <Header
         userName={userData.name}
         location={userData.location}
         weather={userData.weather}
       />
-      
+
       <FlatList
         data={sections}
         renderItem={renderSection}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.flatListContent}
-        nestedScrollEnabled={true}
-        removeClippedSubviews={false}
+        contentContainerStyle={styles.listContent}
       />
 
+      {/* Floating SOS / Record Button */}
       <RecordButton />
     </View>
   );
@@ -590,8 +774,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F9FA',
   },
-  flatListContent: {
-    paddingTop: 16,
-    paddingBottom: 100,
+  listContent: {
+    paddingBottom: 120,
   },
 });

@@ -2,54 +2,67 @@ import User from '../users/user.model.js'
 import { signToken } from '../../utils/jwt.js'
 import Otp from '../users/otp.model.js'
 import crypto from 'crypto'
+import { sendEmailOtp } from '../../services/email.service.js'
 
 export const sendOtp = async (req, res) => {
-  const { identifier } = req.body
+  const { email } = req.body
 
-  if (!identifier)
-    return res.status(400).json({ message: 'Email or phone required' })
+  if (!email)
+    return res.status(400).json({ message: 'Email is required' })
+
+  const normalizedEmail = email.toLowerCase().trim()
 
   const otp = crypto.randomInt(100000, 999999).toString()
 
-  await Otp.deleteMany({ identifier })
+  // Ensure single active OTP
+  await Otp.deleteMany({ email: normalizedEmail })
 
   await Otp.create({
-    identifier,
+    email: normalizedEmail,
     otp,
     expiresAt: new Date(Date.now() + 5 * 60 * 1000)
   })
 
-  // TODO: send email or SMS based on identifier
-  console.log('OTP:', otp)
+  await sendEmailOtp(normalizedEmail, otp)
 
   res.json({ message: 'OTP sent successfully' })
 }
 
 
 export const verifyOtp = async (req, res) => {
-  const { identifier, otp } = req.body
+  const { email, otp } = req.body
 
-  if (!identifier || !otp)
+  if (!email || !otp)
     return res.status(400).json({ message: 'Invalid request' })
 
-  const otpRecord = await Otp.findOne({ identifier })
+  const normalizedEmail = email.toLowerCase().trim()
 
-  if (!otpRecord || otpRecord.otp !== otp)
-    return res.status(401).json({ message: 'Invalid or expired OTP' })
+  const otpRecord = await Otp.findOne({ email: normalizedEmail })
 
-  let user = await User.findOne({
-    $or: [{ email: identifier }, { phone: identifier }]
-  })
+  if (!otpRecord)
+    return res.status(401).json({ message: 'OTP expired or invalid' })
+
+  if (otpRecord.expiresAt < new Date()) {
+    await Otp.deleteMany({ email: normalizedEmail })
+    return res.status(401).json({ message: 'OTP expired' })
+  }
+
+  if (otpRecord.otp !== otp)
+    return res.status(401).json({ message: 'Invalid OTP' })
+
+  let user = await User.findOne({ email: normalizedEmail })
 
   if (!user) {
     user = await User.create({
-      email: identifier.includes('@') ? identifier : undefined,
-      phone: identifier.includes('@') ? undefined : identifier,
+      email: normalizedEmail,
       isVerified: true
     })
+  } else if (!user.isVerified) {
+    user.isVerified = true
+    await user.save()
   }
 
-  await Otp.deleteMany({ identifier })
+  await Otp.deleteMany({ email: normalizedEmail })
 
   const token = signToken({
     id: user._id,
@@ -58,11 +71,6 @@ export const verifyOtp = async (req, res) => {
 
   res.json({
     token,
-    user: {
-      id: user._id,
-      email: user.email,
-      phone: user.phone,
-      role: user.role
-    }
+    user
   })
 }

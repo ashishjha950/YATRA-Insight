@@ -413,7 +413,7 @@
 
 
 // src/screens/permissions/PermissionsScreen.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -423,34 +423,34 @@ import {
   ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { usePermissions } from '../../hooks/usePermissions';
 
 export default function PermissionsScreen({ onComplete }: any) {
-  const [permissions, setPermissions] = useState({
-    location: false,
-    camera: false,
-    storage: false,
-    notifications: false,
-  });
+  const { permissions, requestPermission } = usePermissions()
 
-  const togglePermission = (key: string) => {
-    setPermissions(prev => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
 
-  const enableAllPermissions = () => {
-    setPermissions({
-      location: true,
-      camera: true,
-      storage: true,
-      notifications: true,
-    });
-  };
+  // const togglePermission = (key: string) => {
+  //   setPermissions(prev => ({
+  //     ...prev,
+  //     [key]: !prev[key],
+  //   }));
+  // };
+
+  const enableAllPermissions = async () => {
+  await requestPermission('location')
+  await requestPermission('camera')
+  await requestPermission('storage')
+  await requestPermission('notifications')
+}
 
   const handleContinue = () => {
-   onComplete();
-  };
+  if (!permissions.location || !permissions.notifications) {
+    alert('Location and Notifications are required')
+    return
+  }
+
+  onComplete()
+}
 
   return (
     <View style={styles.container}>
@@ -493,7 +493,7 @@ export default function PermissionsScreen({ onComplete }: any) {
             </View>
             <Switch
               value={permissions.location}
-              onValueChange={() => togglePermission('location')}
+              onValueChange={() => requestPermission('location')}
               trackColor={{ false: '#E0E0E0', true: '#2196F3' }}
               thumbColor="#fff"
               ios_backgroundColor="#E0E0E0"
@@ -521,7 +521,7 @@ export default function PermissionsScreen({ onComplete }: any) {
             </View>
             <Switch
               value={permissions.camera}
-              onValueChange={() => togglePermission('camera')}
+              onValueChange={() => requestPermission('camera')}
               trackColor={{ false: '#E0E0E0', true: '#2196F3' }}
               thumbColor="#fff"
               ios_backgroundColor="#E0E0E0"
@@ -549,7 +549,7 @@ export default function PermissionsScreen({ onComplete }: any) {
             </View>
             <Switch
               value={permissions.storage}
-              onValueChange={() => togglePermission('storage')}
+              onValueChange={() => requestPermission('storage')}
               trackColor={{ false: '#E0E0E0', true: '#2196F3' }}
               thumbColor="#fff"
               ios_backgroundColor="#E0E0E0"
@@ -582,7 +582,7 @@ export default function PermissionsScreen({ onComplete }: any) {
             </View>
             <Switch
               value={permissions.notifications}
-              onValueChange={() => togglePermission('notifications')}
+              onValueChange={() => requestPermission('notifications')}
               trackColor={{ false: '#E0E0E0', true: '#2196F3' }}
               thumbColor="#fff"
               ios_backgroundColor="#E0E0E0"

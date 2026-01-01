@@ -1,10 +1,9 @@
 import api from './api'
-import { LoginPayload, RegisterPayload } from '../types/auth.types'
 
-export const loginUser = (data: LoginPayload) => {
-  return api.post('/auth/login', data)
+export const sendOtp = (email: string) => {
+  return api.post('/auth/send-otp', { email })
 }
 
-export const registerUser = (data: RegisterPayload) => {
-  return api.post('/auth/register', data)
+export const verifyOtp = (email: string, otp: string) => {
+  return api.post('/auth/verify-otp', { email, otp })
 }
