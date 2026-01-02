@@ -659,26 +659,39 @@ import RecentActivitySection from '../../components/ui/Home/RecentActivitySectio
 import RecordButton from '../../components/ui/diary/RecordButton';
 
 import { getUser } from '../../utils/secureStorage';
+import { useLocation } from '../../hooks/useLocation'
+import { useWeather } from '../../hooks/useWeather'
 
 export default function HomeScreen() {
-  const [user, setUser] = useState<any>(null);
+  
+  const [name, setName] = useState('User')
+
+  // 🔹 hooks do the heavy lifting
+  const { location, coords } = useLocation()
+  const weather = useWeather(
+    coords?.latitude,
+    coords?.longitude
+  )
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const storedUser = await getUser();
-      setUser(storedUser);
-    };
-    fetchUser();
-  }, []);
+    const loadUser = async () => {
+      const storedUser = await getUser()
+      if (storedUser?.name) {
+        setName(storedUser.name)
+      }
+    }
 
-  const userData = {
-    name: user?.name || 'User',
-    location: 'San Francisco, CA',
-    weather: {
-      condition: 'Partly Cloudy',
-      temp: 72,
-    },
-  };
+    loadUser()
+  }, [])
+
+
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     const storedUser = await getUser();
+  //     setUser(storedUser);
+  //   };
+  //   fetchUser();
+  // }, []);
 
   const activeTrip = {
     title: 'Exploring Jaipur',
@@ -749,9 +762,9 @@ export default function HomeScreen() {
 
       {/* Gradient Header Component */}
       <Header
-        userName={userData.name}
-        location={userData.location}
-        weather={userData.weather}
+        userName={name}
+        location={location}
+        weather={`${weather.condition} · ${weather.temp}°C`}
       />
 
       <FlatList
