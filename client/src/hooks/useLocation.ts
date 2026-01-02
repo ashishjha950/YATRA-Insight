@@ -8,7 +8,7 @@ export const useLocation = () => {
   useEffect(() => {
     const loadLocation = async () => {
       try {
-        const coordinates = await getCurrentCoordinates()
+          const coordinates = await getCurrentCoordinates()
         const name = await getLocationName(
           coordinates.latitude,
           coordinates.longitude

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { mapAirVisualIcon } from '../utils/weatherMap'
 import { WEATHER_API_KEY } from '../env'
 
 export const getWeatherByCoords = async (
@@ -6,18 +7,25 @@ export const getWeatherByCoords = async (
   lon: number
 ) => {
   const res = await axios.get(
-    `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}`
+    'https://api.airvisual.com/v2/nearest_city',
+    {
+      params: {
+        lat,
+        lon,
+        key: WEATHER_API_KEY,
+      },
+    }
   )
-  console.log(res)
 
-  if (!res.status) {
-    throw new Error('Weather fetch failed')
+  const current = res.data?.data?.current
+
+  if (!current?.weather || !current?.pollution) {
+    throw new Error('Invalid AirVisual response')
   }
 
-  const data = res
-
   return {
-    condition: data.weather[0].main,
-    temp: Math.round(data.main.temp),
+    condition: mapAirVisualIcon(current.weather.ic),
+    temp: current.weather.tp,
+    aqi: current.pollution.aqius,
   }
 }

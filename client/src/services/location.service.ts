@@ -1,8 +1,23 @@
-import * as Location from 'expo-location'
+import * as Location from 'expo-location';
+
 
 export const getCurrentCoordinates = async () => {
+
+  // 1️⃣ Try last known location (FAST & RELIABLE)
+  const lastKnown = await Location.getLastKnownPositionAsync()
+
+  if (lastKnown) {
+    return {
+      latitude: lastKnown.coords.latitude,
+      longitude: lastKnown.coords.longitude,
+    }
+  }
+
+
+  // 2️⃣ Fallback to fresh GPS fix
   const position = await Location.getCurrentPositionAsync({
     accuracy: Location.Accuracy.Balanced,
+    timeout: 10000, // ⏱️ avoid infinite hang
   })
 
   return {
@@ -10,6 +25,7 @@ export const getCurrentCoordinates = async () => {
     longitude: position.coords.longitude,
   }
 }
+
 
 export const getLocationName = async (
   latitude: number,

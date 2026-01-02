@@ -1,32 +1,37 @@
 import { useEffect, useState } from 'react'
 import { getWeatherByCoords } from '../services/weather.service'
 
+type WeatherData = {
+  condition: string
+  temp: number
+  aqi: number
+}
+
 export const useWeather = (
-  latitude?: number,
-  longitude?: number
+  lat?: number,
+  lon?: number
 ) => {
-  const [weather, setWeather] = useState<{
-    condition: string
-    temp: number | null
-  }>({
-    condition: '',
-    temp: null,
-  })
+  const [weather, setData] = useState<WeatherData | null>(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!latitude || !longitude) return
+    if (!lat || !lon) return
 
-    const loadWeather = async () => {
+    const load = async () => {
       try {
-        const data = await getWeatherByCoords(latitude, longitude)
-        setWeather(data)
-      } catch {
-        setWeather({ condition: 'Unavailable', temp: null })
+        setLoading(true)
+        const res = await getWeatherByCoords(lat, lon)
+        setData(res)
+      } catch (e) {
+        console.log('❌ WEATHER ERROR', e)
+        setData(null)
+      } finally {
+        setLoading(false)
       }
     }
 
-    loadWeather()
-  }, [latitude, longitude])
+    load()
+  }, [lat, lon])
 
-  return weather
+  return { weather, loading }
 }

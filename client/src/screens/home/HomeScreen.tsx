@@ -668,10 +668,10 @@ export default function HomeScreen() {
 
   // 🔹 hooks do the heavy lifting
   const { location, coords } = useLocation()
-  const weather = useWeather(
+  const { weather, loading }= useWeather(
     coords?.latitude,
     coords?.longitude
-  )
+)
 
   useEffect(() => {
     const loadUser = async () => {
@@ -764,7 +764,8 @@ export default function HomeScreen() {
       <Header
         userName={name}
         location={location}
-        weather={`${weather.condition} · ${weather.temp}°C`}
+        weather={weather}
+        loading={loading}
       />
 
       <FlatList
