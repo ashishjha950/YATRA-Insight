@@ -757,7 +757,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View  style={styles.container}>
       <StatusBar style="light" />
 
       {/* Gradient Header Component */}
