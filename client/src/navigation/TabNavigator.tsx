@@ -597,6 +597,7 @@ import TrackScreen from '../screens/track/TrackScreen';
 import SafetyScreen from '../screens/safety/SafetyScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import DiaryScreen from "../screens/diary/DiaryScreen"
+import "./global.css"
 
 const Tab = createBottomTabNavigator();
 
