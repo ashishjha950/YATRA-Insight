@@ -413,7 +413,6 @@ import MainNavigator from "./TabNavigator";
 import ExpensesScreen from "../screens/expenses/ExpensesScreen";
 import StartTripScreen from "../screens/trip/StartTripScreen";
 import TripScreen from "../screens/trip/TripScreen";
-import "./global.css"
 
 import { getToken } from "../utils/secureStorage";
 
