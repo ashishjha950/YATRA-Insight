@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +10,9 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useEffect, useState } from "react";
+import { getUser, updateUser } from "../../utils/secureStorage";
+
 
 
 const EditProfile: React.FC = () => {
@@ -60,6 +62,8 @@ const EditProfile: React.FC = () => {
     },
   ]);
 };
+
+
 
   return (
     <View style={styles.container}>
