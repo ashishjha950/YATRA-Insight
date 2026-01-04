@@ -305,6 +305,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { useAuthOtp } from '../../hooks/useAuthOtp'
 import { saveAuth } from '../../utils/secureStorage';
+import { useAuth } from '../../context/AuthContext';
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
@@ -316,6 +317,7 @@ export default function LoginScreen({ navigation }: any) {
   confirmOtp,
 } = useAuthOtp()
 
+  const { setUser } = useAuth()
 
   const isValidEmail = (value: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
@@ -342,6 +344,7 @@ const handleSendOTP = async () => {
 
     const res = await confirmOtp(email, otp)
     await saveAuth(res.token, res.user)
+    setUser(res.user)
     navigation.navigate('EmergencyContact')
   }
 }

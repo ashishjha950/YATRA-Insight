@@ -22,7 +22,7 @@ export const clearAuth = async () => {
   await SecureStore.deleteItemAsync(USER_KEY)
 }
 
-export const updateUser = async (updatedUser: any) => {
+export const updateUserKey = async (updatedUser: any) => {
   await SecureStore.setItemAsync(
     USER_KEY,
     JSON.stringify(updatedUser)

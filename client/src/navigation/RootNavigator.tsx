@@ -413,20 +413,22 @@ import MainNavigator from "./TabNavigator";
 import ExpensesScreen from "../screens/expenses/ExpensesScreen";
 import StartTripScreen from "../screens/trip/StartTripScreen";
 import TripScreen from "../screens/trip/TripScreen";
-import { getToken } from "../utils/secureStorage";
-import EditProfile from "../screens/profile/EditProfile";
-import ProfileScreen from "../screens/profile/ProfileScreen";
+import { getToken, getUser } from "../utils/secureStorage";
+import { useAuth } from "../context/AuthContext";
 
 const Stack = createNativeStackNavigator();
 
 export default function RootNavigator() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { setUser } = useAuth()
 
   useEffect(() => {
     const bootstrapAuth = async () => {
       const token = await getToken();
       setIsAuthenticated(!!token);
+      const user = await getUser();
+      if(user) setUser(user);
       setIsLoading(false);
     };
 

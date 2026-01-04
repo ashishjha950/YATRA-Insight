@@ -14,7 +14,7 @@ const router = Router()
 
 router.use('/auth', authRoutes)
 router.use('/admin/auth', adminAuthRoutes)
-router.use('/users', userRoutes)
+router.use('/user', userRoutes)
 router.use('/trips', tripRoutes)
 router.use('/expenses', expenseRoutes)
 router.use('/sos', sosRoutes)

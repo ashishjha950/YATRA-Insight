@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import {
   View,
   Text,
@@ -6,74 +7,94 @@ import {
   Image,
   TouchableOpacity,
   Alert,
-} from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
-import { getUser, updateUser } from "../../utils/secureStorage";
+  ActivityIndicator,
+} from 'react-native'
+import * as ImagePicker from 'expo-image-picker'
+import { useNavigation } from '@react-navigation/native'
 
-
+import { uploadImageToCloudinary } from '../../services/upload.service'
+import { updateProfile } from '../../services/user.service'
+import { useAuth } from '../../context/AuthContext'
 
 const EditProfile: React.FC = () => {
-    const [name, setName] = useState<string>("Rohit Burman");
-    const [email] = useState<string>("rohit@gmail.com");
-    const [gender] = useState<string>("Male");
-    const [profilePic, setProfilePic] = useState<string>(
-        "https://i.pravatar.cc/300"
-    );
-    type ProfileStackParamList = {
-  Profile: undefined;
-  EditProfile: undefined;
-};
-     type NavigationProp =
-        NativeStackNavigationProp<ProfileStackParamList>;
-        const navigation = useNavigation<NavigationProp>();
+  const { user, updateUser } = useAuth()
+  const navigation = useNavigation()
 
-    const pickImage = async (): Promise<void> => {
-        const permission =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-        
-        if (!permission.granted) {
-            Alert.alert("Permission required", "Please allow gallery access");
-            return;
-        }
-  
-  
-  const result: ImagePicker.ImagePickerResult =
-  await ImagePicker.launchImageLibraryAsync({
+  const [name, setName] = useState(user?.name || '')
+  const [profilePic, setProfilePic] = useState(user?.avatar || '')
+  const [localImage, setLocalImage] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  const pickImage = async () => {
+    const permission =
+      await ImagePicker.requestMediaLibraryPermissionsAsync()
+
+    if (!permission.granted) {
+      Alert.alert(
+        'Permission required',
+        'Please allow gallery access'
+      )
+      return
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 1,
-    });
+      quality: 0.8,
+    })
 
     if (!result.canceled) {
-      setProfilePic(result.assets[0].uri);
+      const uri = result.assets[0].uri
+      setLocalImage(uri)
+      setProfilePic(uri) // preview
     }
-  };
+  }
 
- const saveProfile = (): void => {
-  Alert.alert("Success", "Profile updated successfully", [
-    {
-      text: "OK",
-      onPress: () => navigation.goBack()
-,
-    },
-  ]);
-};
+  const saveProfile = async () => {
+    if (!name.trim()) {
+      Alert.alert('Validation', 'Name cannot be empty')
+      return
+    }
 
+    try {
+      setLoading(true)
 
+      let avatarUrl = user?.avatar
+
+      if (localImage) {
+        avatarUrl = await uploadImageToCloudinary(localImage)
+      }
+
+      const res = await updateProfile({
+        name,
+        avatar: avatarUrl,
+      })
+
+      updateUser(res.user)
+
+      Alert.alert('Success', 'Profile updated', [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ])
+    } catch (e) {
+      console.log(e)
+      Alert.alert('Error', 'Failed to update profile')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <View style={styles.container}>
       {/* Profile Picture */}
       <TouchableOpacity onPress={pickImage}>
-        <Image source={{ uri: profilePic }} style={styles.image} />
+        <Image source={profilePic
+      ? { uri: profilePic }
+      : require('../../../assets/images/default/default-avatar.png')} style={styles.image} />
         <Text style={styles.changeText}>Change Photo</Text>
       </TouchableOpacity>
 
-      {/* Name (Editable) */}
+      {/* Name */}
       <Text style={styles.label}>Name</Text>
       <TextInput
         style={styles.input}
@@ -82,31 +103,31 @@ const EditProfile: React.FC = () => {
         placeholder="Enter your name"
       />
 
-      {/* Email (Read Only) */}
+      {/* Email (read-only) */}
       <Text style={styles.label}>Email</Text>
       <TextInput
         style={[styles.input, styles.disabled]}
-        value={email}
-        editable={false}
-      />
-
-      {/* Gender (Read Only) */}
-      <Text style={styles.label}>Gender</Text>
-      <TextInput
-        style={[styles.input, styles.disabled]}
-        value={gender}
+        value={user?.email}
         editable={false}
       />
 
       {/* Save Button */}
-      <TouchableOpacity style={styles.btn} onPress={saveProfile}>
-        <Text style={styles.btnText}>Save Changes</Text>
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={saveProfile}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.btnText}>Save Changes</Text>
+        )}
       </TouchableOpacity>
     </View>
-  );
-};
+  )
+}
 
-export default EditProfile;
+export default EditProfile
 
 const styles = StyleSheet.create({
   container: {

@@ -657,10 +657,9 @@ import QuickActions from '../../components/ui/Home/QuickActions';
 import RecommendedSection from '../../components/ui/Home/RecommendedSection';
 import RecentActivitySection from '../../components/ui/Home/RecentActivitySection';
 import RecordButton from '../../components/ui/diary/RecordButton';
-
-import { getUser } from '../../utils/secureStorage';
 import { useLocation } from '../../hooks/useLocation'
 import { useWeather } from '../../hooks/useWeather'
+import { useAuth } from '../../context/AuthContext';
 
 export default function HomeScreen() {
   
@@ -672,26 +671,12 @@ export default function HomeScreen() {
     coords?.latitude,
     coords?.longitude
 )
+  const {user} = useAuth();
 
-  useEffect(() => {
-    const loadUser = async () => {
-      const storedUser = await getUser()
-      if (storedUser?.name) {
-        setName(storedUser.name)
-      }
-    }
+  useEffect(()=>{
+    if(user) setName(user.name);
+  },[user])
 
-    loadUser()
-  }, [])
-
-
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     const storedUser = await getUser();
-  //     setUser(storedUser);
-  //   };
-  //   fetchUser();
-  // }, []);
 
   const activeTrip = {
     title: 'Exploring Jaipur',
