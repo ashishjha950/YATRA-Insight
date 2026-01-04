@@ -596,7 +596,10 @@ import HomeScreen from '../screens/home/HomeScreen';
 import TrackScreen from '../screens/track/TrackScreen';
 import SafetyScreen from '../screens/safety/SafetyScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import EditProfile from '../screens/profile/EditProfile';
 import DiaryScreen from "../screens/diary/DiaryScreen"
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 
 const Tab = createBottomTabNavigator();
 
@@ -652,6 +655,26 @@ const ProfileIcon = ({ focused }: { focused: boolean }) => (
   </View>
 );
 
+const ProfileStack = createNativeStackNavigator();
+
+function ProfileStackScreen() {
+  return (
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen
+        name="ProfileMain"
+        component={ProfileScreen}
+        options={{ headerShown: false }}
+      />
+      <ProfileStack.Screen
+        name="EditProfile"
+        component={EditProfile}
+        options={{ title: "Edit Profile" }}
+      />
+    </ProfileStack.Navigator>
+  );
+}
+
+
 export default function TabNavigator() {
   return (
     <Tab.Navigator
@@ -693,12 +716,14 @@ export default function TabNavigator() {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({ focused }) => <ProfileIcon focused={focused} />,
-        }}
-      />
+  name="Profile"
+  component={ProfileStackScreen}
+  options={{
+    tabBarIcon: ({ focused }) => <ProfileIcon focused={focused} />,
+    headerShown: false,
+  }}
+/>
+
     </Tab.Navigator>
   );
 }

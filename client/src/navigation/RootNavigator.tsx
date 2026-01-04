@@ -414,6 +414,8 @@ import ExpensesScreen from "../screens/expenses/ExpensesScreen";
 import StartTripScreen from "../screens/trip/StartTripScreen";
 import TripScreen from "../screens/trip/TripScreen";
 import { getToken } from "../utils/secureStorage";
+import EditProfile from "../screens/profile/EditProfile";
+import ProfileScreen from "../screens/profile/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -475,7 +477,11 @@ export default function RootNavigator() {
 
              <Stack.Screen name="Trip" component={TripScreen} options={{
               animation: "slide_from_right", // optional but nice
-            }} />       
+            }} />    
+
+             
+     
+      
 
       </>
       )}

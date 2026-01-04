@@ -294,6 +294,8 @@
 
 
 import React, { useEffect, useState } from 'react';
+import { useNavigation } from "@react-navigation/native";
+
 import {
   View,
   Text,
@@ -306,6 +308,7 @@ import { StatusBar } from 'expo-status-bar';
 import SettingItems from './SettingItems';
 import RecordButton from '../../components/ui/diary/RecordButton';
 import { clearAuth, getUser } from '../../utils/secureStorage';
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export default function ProfileScreen() {
   const [user, setUser] = useState<any>(null);
@@ -323,6 +326,18 @@ export default function ProfileScreen() {
   useEffect(() => {
     fetchData();
   }, []);
+
+type ProfileStackParamList = {
+  Profile: undefined;
+  EditProfile: undefined;
+};
+
+type NavigationProp =
+  NativeStackNavigationProp<ProfileStackParamList>;
+
+
+  const navigation = useNavigation<NavigationProp>();
+
 
   return (
     <View style={styles.container}>
@@ -347,7 +362,9 @@ export default function ProfileScreen() {
             <Text style={styles.email}>{user?.email || 'user@email.com'}</Text>
           </View>
 
-          <TouchableOpacity>
+          <TouchableOpacity
+             onPress={() => navigation.navigate("EditProfile")}
+          >
             <Text style={styles.editText}>Edit</Text>
           </TouchableOpacity>
         </View>
