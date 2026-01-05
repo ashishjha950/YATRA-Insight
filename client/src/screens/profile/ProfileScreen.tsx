@@ -294,10 +294,13 @@
 
 
 import React, { useEffect, useState } from 'react';
+import { useNavigation } from "@react-navigation/native";
+
 import {
   View,
   Text,
   StyleSheet,
+  Image,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
@@ -306,23 +309,28 @@ import { StatusBar } from 'expo-status-bar';
 import SettingItems from './SettingItems';
 import RecordButton from '../../components/ui/diary/RecordButton';
 import { clearAuth, getUser } from '../../utils/secureStorage';
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useAuth } from '../../context/AuthContext';
 
 export default function ProfileScreen() {
-  const [user, setUser] = useState<any>(null);
-
-  const fetchData = async () => {
-    const storedUser = await getUser();
-    setUser(storedUser);
-  };
+    const {user} = useAuth();
+  
 
   const logoutUser = async () => {
     await clearAuth();
     // yaha baad me navigation reset bhi kar sakte ho
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+type ProfileStackParamList = {
+  Profile: undefined;
+  EditProfile: undefined;
+};
+
+type NavigationProp =
+  NativeStackNavigationProp<ProfileStackParamList>;
+
+
+  const navigation = useNavigation<NavigationProp>();
 
   return (
     <View style={styles.container}>
@@ -337,9 +345,12 @@ export default function ProfileScreen() {
         {/* Profile Card */}
         <View style={styles.profileCard}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>
-              {user?.name ? user.name[0].toUpperCase() : 'U'}
-            </Text>
+            <View>
+              <Image source={user.avatar
+                    ? { uri: user.avatar }
+                    : require('../../../assets/images/default/default-avatar.png')}
+                    style={{ width: 80, height: 80, borderRadius: 40 }} />
+            </View>
           </View>
 
           <View style={styles.profileInfo}>
@@ -347,7 +358,9 @@ export default function ProfileScreen() {
             <Text style={styles.email}>{user?.email || 'user@email.com'}</Text>
           </View>
 
-          <TouchableOpacity>
+          <TouchableOpacity
+             onPress={() => navigation.navigate("EditProfile")}
+          >
             <Text style={styles.editText}>Edit</Text>
           </TouchableOpacity>
         </View>

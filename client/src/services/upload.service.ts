@@ -1,0 +1,35 @@
+import {
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_UPLOAD_PRESET,
+} from '../env'
+
+export const uploadImageToCloudinary = async (
+  imageUri: string
+): Promise<string> => {
+  const data = new FormData()
+
+  data.append('file', {
+    uri: imageUri,
+    type: 'image/jpeg',
+    name: 'avatar.jpg',
+  } as any)
+
+  data.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+    {
+      method: 'POST',
+      body: data,
+    }
+  )
+
+  const json = await res.json()
+
+  if (!json.secure_url) {
+    console.log('Cloudinary error:', json)
+    throw new Error('Image upload failed')
+  }
+
+  return json.secure_url
+}

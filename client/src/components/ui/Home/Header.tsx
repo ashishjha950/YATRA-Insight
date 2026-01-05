@@ -52,7 +52,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 
-const Header = ({ userName, location, weather }) => {
+const Header = ({ userName, location, weather,loading }) => {
   return (
     <LinearGradient
         colors={['#1976D2', '#1565C0']}
@@ -71,9 +71,15 @@ const Header = ({ userName, location, weather }) => {
         </View>
         
         <View style={styles.weatherCard}>
+          {loading && <Text>Fetching weather…</Text>}
+          {weather && (
+        <>
           <Text style={styles.weatherIcon}>☁️</Text>
           <Text style={styles.weatherText}>{weather.condition}</Text>
           <Text style={styles.temperature}>{weather.temp}°F</Text>
+          <Text>{weather.aqi}</Text>
+        </>
+      )}
         </View>
       </View>
 

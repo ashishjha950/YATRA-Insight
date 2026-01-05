@@ -657,28 +657,26 @@ import QuickActions from '../../components/ui/Home/QuickActions';
 import RecommendedSection from '../../components/ui/Home/RecommendedSection';
 import RecentActivitySection from '../../components/ui/Home/RecentActivitySection';
 import RecordButton from '../../components/ui/diary/RecordButton';
-
-import { getUser } from '../../utils/secureStorage';
+import { useLocation } from '../../hooks/useLocation'
+import { useWeather } from '../../hooks/useWeather'
+import { useAuth } from '../../context/AuthContext';
 
 export default function HomeScreen() {
-  const [user, setUser] = useState<any>(null);
+  
+  const [name, setName] = useState('User')
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const storedUser = await getUser();
-      setUser(storedUser);
-    };
-    fetchUser();
-  }, []);
+  // 🔹 hooks do the heavy lifting
+  const { location, coords } = useLocation()
+  const { weather, loading }= useWeather(
+    coords?.latitude,
+    coords?.longitude
+)
+  const {user} = useAuth();
 
-  const userData = {
-    name: user?.name || 'User',
-    location: 'San Francisco, CA',
-    weather: {
-      condition: 'Partly Cloudy',
-      temp: 72,
-    },
-  };
+  useEffect(()=>{
+    if(user) setName(user.name);
+  },[user])
+
 
   const activeTrip = {
     title: 'Exploring Jaipur',
@@ -744,14 +742,15 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View  style={styles.container}>
       <StatusBar style="light" />
 
       {/* Gradient Header Component */}
       <Header
-        userName={userData.name}
-        location={userData.location}
-        weather={userData.weather}
+        userName={name}
+        location={location}
+        weather={weather}
+        loading={loading}
       />
 
       <FlatList
