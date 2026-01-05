@@ -648,7 +648,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import Header from '../../components/ui/Home/Header';
@@ -745,7 +745,8 @@ export default function HomeScreen() {
     <View  style={styles.container}>
       <StatusBar style="light" />
 
-      {/* Gradient Header Component */}
+    <ScrollView>
+        {/* Gradient Header Component */}
       <Header
         userName={name}
         location={location}
@@ -761,6 +762,7 @@ export default function HomeScreen() {
         contentContainerStyle={styles.listContent}
       />
 
+    </ScrollView>
       {/* Floating SOS / Record Button */}
       <RecordButton />
     </View>

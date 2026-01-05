@@ -413,6 +413,8 @@ import MainNavigator from "./TabNavigator";
 import ExpensesScreen from "../screens/expenses/ExpensesScreen";
 import StartTripScreen from "../screens/trip/StartTripScreen";
 import TripScreen from "../screens/trip/TripScreen";
+import AddEmergencyContact from "../components/ui/safety/AddEmergencyContact";
+import AddTrustedContact from "../components/ui/safety/AddTrustedContact";
 import { getToken, getUser } from "../utils/secureStorage";
 import { useAuth } from "../context/AuthContext";
 
@@ -482,8 +484,15 @@ export default function RootNavigator() {
             }} />    
 
              
-     
+      <Stack.Screen name="AddEmergencyContact" component={AddEmergencyContact} 
+          options={{ animation: "slide_from_right",
+          }} />
       
+
+          <Stack.Screen name="AddTrustedContact" component={AddTrustedContact} 
+          options={{ animation: "slide_from_right",
+          }} />
+
 
       </>
       )}

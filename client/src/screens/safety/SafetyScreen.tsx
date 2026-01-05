@@ -207,38 +207,122 @@
 
 
 
-import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList, Alert } from 'react-native';
 import SafetyHeader from '../../components/ui/safety/SafetyHeader';
 import SosCard from '../../components/ui/safety/SosCard';
 import ContactCard from '../../components/ui/safety/ContactCard';
-import HelpCenterCard from '../../components/ui/safety/HelpCenterCard';
 import SafetyTipsCard from '../../components/ui/safety/SafetyTipsCard';
-import {
-  emergencyContacts,
-  trustedContacts,
-  helpCenters,
-} from '../../constants/safetyData';
+import { getEmergencyContacts, deleteEmergencyContact } from '../../services/sos.service';
+import AddContactButton from '../../components/ui/safety/AddContactButton';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 export default function SafetyScreen() {
+
+  const navigation = useNavigation<any>();
+
+   const [emergencyContacts, setEmergencyContacts] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+
+  const fetchContacts = async () => {
+    try {
+      setLoading(true);
+      const contacts = await getEmergencyContacts();
+        setEmergencyContacts(
+      Array.isArray(contacts) ? contacts : []
+    );
+    } catch (err) {
+      console.log('Failed to fetch emergency contacts', err);
+      setEmergencyContacts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+const handleDeleteContact = async (id: string) => {
+  try {
+    await deleteEmergencyContact(id);
+    setEmergencyContacts((prev) =>
+      prev.filter((c) => c._id !== id)
+    );
+  } catch (err) {
+    Alert.alert('Error', 'Failed to delete contact');
+  }
+};
+
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchContacts();
+    }, [])
+  );
+
+   const handleAddEmergencyContact = () => {
+    console.log('Add Emergency Contact');
+      navigation.navigate('AddEmergencyContact')
+    // Navigate to add emergency contact screen
+  };
+
+  const handleAddTrustedContact = () => {
+    console.log('Add Trusted Contact');
+     navigation.navigate('AddTrustedContact')
+    // Navigate to add trusted contact screen
+  };
+
   return (
     <View style={styles.container}>
       <SafetyHeader />
 
-      <FlatList
+      {/* <FlatList
         ListHeaderComponent={
           <>
             <SosCard />
 
-            <Text style={styles.section}>Emergency Contacts</Text>
+             <Text style={styles.section}>Emergency Contacts</Text>
             {emergencyContacts.map(c => (
               <ContactCard key={c.id} {...c} color="#26C6DA" />
             ))}
+            <AddContactButton
+              title="Add Emergency Contact"
+              onPress={handleAddEmergencyContact}
+              color="#9E9E9E"
+            /> 
+
+
+            
+            <Text style={styles.section}>Emergency Contacts</Text>
+
+            {loading && <Text>Loading contacts...</Text>}
+
+            {!loading && emergencyContacts.length === 0 && (
+              <Text style={styles.emptyText}>No emergency contacts added</Text>
+            )}
+
+            {emergencyContacts.map((c) => (
+              <ContactCard
+                key={c._id}              // ✅ FIXED
+                name={c.name}
+                relation={c.relation}
+                phone={c.phone}
+                color="#26C6DA"
+              />
+            ))}
+
+            <AddContactButton
+              title="Add Emergency Contact"
+              onPress={handleAddEmergencyContact}
+              color="#9E9E9E"
+            />
 
             <Text style={styles.section}>Trusted Contacts</Text>
             {trustedContacts.map(c => (
               <ContactCard key={c.id} {...c} color="#2196F3" />
             ))}
+            <AddContactButton
+              title="Add Trusted Contact"
+              onPress={handleAddTrustedContact}
+              color="#2196F3"
+            />
 
             <Text style={styles.section}>Nearest Help Centers</Text>
           </>
@@ -249,7 +333,44 @@ export default function SafetyScreen() {
         ListFooterComponent={<SafetyTipsCard />}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+      /> */}
+
+
+       <FlatList
+        data={emergencyContacts}
+        keyExtractor={(item) => item._id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+        ListHeaderComponent={
+          <>
+            <SosCard />
+            <Text style={styles.section}>Emergency Contacts</Text>
+          </>
+        }
+        renderItem={({ item }) =>{
+          return (
+          <ContactCard
+          id={item._id}
+            name={item.name}
+            relation={item.relation}
+            phone={item.phone}
+            color="#26C6DA"
+            onDelete={handleDeleteContact}
+          />
+        )}}
+        ListFooterComponent={
+          <>
+            <AddContactButton
+              title="Add Emergency Contact"
+              onPress={handleAddEmergencyContact}
+              color="#9E9E9E"
+            />
+            <SafetyTipsCard />
+          </>
+        }
       />
+
+
     </View>
   );
 }
@@ -261,5 +382,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     marginVertical: 16,
+  },
+    emptyText: {
+    color: '#9E9E9E',
+    marginBottom: 8,
   },
 });
