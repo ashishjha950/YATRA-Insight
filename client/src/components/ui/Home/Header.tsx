@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
+    marginBottom: 12
   },
   header: {
      flexDirection: 'column',

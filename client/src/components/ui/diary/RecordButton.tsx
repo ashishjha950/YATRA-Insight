@@ -1,12 +1,22 @@
-// components/diary/RecordButton.tsx
-
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const RecordButton: React.FC = () => {
+
+     const navigation = useNavigation<any>();
+    
+  const handlePress = () => {
+    navigation.navigate('Safety');
+  };
+
   return (
-    <TouchableOpacity style={styles.recordButton}>
+    <TouchableOpacity 
+    style={styles.recordButton}
+    activeOpacity={0.8}
+    onPress={handlePress}
+    >
       <View style={styles.recordInner}>
         <Ionicons name="alert-circle" size={20} color="#fff" />
       </View>
